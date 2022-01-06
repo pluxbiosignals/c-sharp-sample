@@ -17,13 +17,13 @@ This value is the number of elements of the data array passed to the OnRawFrame(
         <member name="M:PluxDotNet.SignalsDev.Stop">
             <summary>Stops a real-time acquisition session.</summary>
         </member>
-        <member name="M:PluxDotNet.SignalsDev.Start(System.Single,System.Collections.Generic.List{PluxDotNet.Source})">
+        <member name="M:PluxDotNet.SignalsDev.Start(System.Single,System.Collections.Generic.List`1{PluxDotNet.Source})">
             <summary>Starts a real-time acquisition session.</summary>
             <param name="baseFreq">Acquisition base sampling frequency in Hertz.</param>
             <param name="sources">Signal sources to acquire.</param>
             <remarks>This method is not supported on BITalino devices.</remarks>
         </member>
-        <member name="M:PluxDotNet.SignalsDev.Start(System.Single,System.Collections.Generic.List{System.Int32},System.Int32)">
+        <member name="M:PluxDotNet.SignalsDev.Start(System.Single,System.Collections.Generic.List`1{System.Int32},System.Int32)">
             <summary>Starts a real-time acquisition session.</summary>
             <remarks>This method is a shortcut to Start(baseFreq, sources).
 It can be called if all requested sources are to be sampled at the same frequency and resolution, and at their channel 1 only.</remarks>
@@ -66,6 +66,12 @@ This method cannot be called from a callback.</remarks>
             <param name="timeout"> Timeout value in milliseconds.
 If timeout is 0, an immediate timeout condition occurs in Loop() if there are no pending messages from device to dispatch.
 If timeout is -1, a timeout condition never occurs.</param>
+        </member>
+        <member name="M:PluxDotNet.BaseDev.GetParameter(System.Int32,System.Int32,System.Int32)">
+            <summary>Gets a system or sensor parameter value.</summary>
+        </member>
+        <member name="M:PluxDotNet.BaseDev.SetParameter(System.Int32,System.Int32,System.Int32[],System.Int32)">
+            <summary>Sets a system or sensor parameter value.</summary>
         </member>
         <member name="M:PluxDotNet.BaseDev.GetBattery">
             <summary>Returns the remaining battery charge or charging status.</summary>
@@ -193,6 +199,24 @@ All source channels share the same frequency divisor and sampling resolution set
         </member>
         <member name="T:PluxDotNet.DevInfo">
             <summary>Information about a device found by BaseDev.FindDevices().</summary>
+        </member>
+        <member name="T:PluxDotNet.Event.Test">
+            <summary>Test event class.</summary>
+        </member>
+        <member name="T:PluxDotNet.Event.CalibrationData">
+            <summary>Calibration send data frames event class.</summary>
+        </member>
+        <member name="F:PluxDotNet.Event.DeviceState.state">
+            <summary>Device state.</summary>
+        </member>
+        <member name="T:PluxDotNet.Event.DeviceState.State">
+            <summary>Device state enumeration.</summary>
+        </member>
+        <member name="T:PluxDotNet.Event.DeviceState">
+            <summary>Device state change event class.</summary>
+        </member>
+        <member name="T:PluxDotNet.Event.FrameData">
+            <summary>Acquisition send data frames event class.</summary>
         </member>
         <member name="F:PluxDotNet.Event.Battery.percentage">
             <summary>Remaining battery charge as a percentage of full capacity.</summary>
@@ -365,6 +389,25 @@ Current device state returned by BITalinoDev::getState()
         <member name="T:Plux.BITalinoDev">
 Base class for Plux BITalino devices.
 </member>
+        <member name="M:Plux.MemoryDev.addSchedule_ext(Plux.Schedule!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
+Adds a session schedule to the device.
+       An internal acquisition session (i.e., an acquisition to internal memory) will start
+       when the schedule start time or condition is met.
+       \note This function is the same as addSchedules_ext except that chMask is 2 bytes instead of 1 byte.
+       \param sch %Schedule to add.
+       \remarks On current devices firmware, only one schedule can be stored.
+
+</member>
+        <member name="M:Plux.MemoryDev.getSchedules_ext(std.vector&lt;Plux.Schedule,std.allocator&lt;Plux.Schedule&gt;&gt;*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
+Returns all session schedules stored on the device.
+       The returned schedules can refer to a running session (a running schedule, at most one such schedule) or
+       to a session to run in the future. The schedules were previously added by calling addSchedule() or start().
+       \note This function is the same as getSchedules except that returned chMask is 2 bytes instead of 1 byte.
+       \param schs Reference to a #Schedules object to be filled by this method.
+       \return Index to the running schedule in the returned vector, starting at 1; if zero, no schedule is running.
+       \remarks On current devices firmware, only one schedule can be stored.
+
+</member>
         <member name="M:Plux.MemoryDev.onSessionEvent(Plux.Event!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
 %Event callback for stored sessions replay.
        This callback is called by replaySession() for every event to be replayed from the stored session.
@@ -482,12 +525,12 @@ Stored session header class.
     MemoryDev::getSessions() returns objects of this class.
 
 </member>
-        <member name="T:Plux.SourceEx">
-Acquisition source class with properties attribute.
-    The Session::sources attribute has this class to carry normal Source attributes and additional source properties.
+        <member name="T:Plux.SessionSource">
+Saved acquisition source class with sensor information.
+    \see Session::sources
 
 </member>
-        <member name="M:Plux.Schedule.#ctor(System.Int64,System.Int32,System.Single,std.vector&lt;Plux.Source,std.allocator&lt;Plux.Source&gt;&gt;,std.basic_string&lt;System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte,std.char_traits{System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte},std.allocator&lt;System.SByte!System.Runtime.CompilerServices.IsSignUnspecifiedByte&gt;&gt;)">
+        <member name="M:Plux.Schedule.#ctor">
 Initializes all structure fields.
        All arguments are optional. A structure field is initialized with the corresponding argument value, if provided.
        Otherwise, the field is initialized with its default value.
@@ -542,6 +585,10 @@ Starts a real-time acquisition session.
        \remarks This method is not supported on BITalino devices.
 
 </member>
+        <member name="M:Plux.SignalsDev.getSensors(std.map&lt;System.Int32,Plux.Sensor,std.less&lt;System.Int32&gt;,std.allocator&lt;std.pair&lt;System.Int32!System.Runtime.CompilerServices.IsConst,Plux.Sensor&gt;&gt;&gt;*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
+Returns information about attached sensors and internal sensors
+
+</member>
         <member name="M:Plux.SignalsDev.#ctor(Plux.BaseDev*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
 Promotes a BaseDev instance to SignalsDev.
        \param baseDev Instance to be promoted. If promotion is successful, \c baseDev is no longer valid.
@@ -561,8 +608,21 @@ Initializes all structure fields.
        Otherwise, the field is initialized with its default value.
 
 </member>
-        <member name="T:Plux.Source.Class">
-%Source class enumeration
+        <member name="D:Plux.Sensors">
+Map of sensor port indexes to Sensor information.
+    \see SignalsDev::getSensors, SessionSource::sensor
+
+</member>
+        <member name="T:Plux.Sensor.Color">
+%Sensor sleeve color enumeration
+</member>
+        <member name="T:Plux.Sensor.Class">
+%Sensor class enumeration
+</member>
+        <member name="T:Plux.Sensor">
+Sensor information class
+    \see SignalsDev::getSensors, SessionSource::sensor
+
 </member>
         <member name="T:Plux.BaseDev.X">
 \cond
@@ -605,7 +665,7 @@ Sends an interrupt signal to loop().
         <member name="M:Plux.BaseDev.loop">
 Runs the device message loop.
        The message loop receives and dispatches the messages from the device to the callbacks.
-       This method returns when a callback returns True.
+       This method returns when a callback returns true.
        \remarks This method cannot be called from a callback.
 
 </member>
@@ -623,8 +683,22 @@ Returns the remaining battery charge as a percentage of full capacity.
        The returned value is -1 if the device is charging.
 
 </member>
-        <member name="M:Plux.BaseDev.setParameter(System.Int32,System.Int32,System.Void!System.Runtime.CompilerServices.IsConst*,System.Int32)">
+        <member name="M:Plux.BaseDev.getParameter(System.Int32,System.Int32,System.Void*,System.Int32)">
 \cond
+</member>
+        <member name="M:Plux.BaseDev.setParameter(System.Int32,System.Int32,System.Void!System.Runtime.CompilerServices.IsConst*,System.Int32)">
+Sets a system or sensor parameter value.
+       \param port %Sensor port number for a sensor parameter, or zero for a system parameter.
+       \param index Index of the parameter to set within the sensor or system.
+       \param data Address of the data block to assign to the parameter
+       \param dataLen Size of the data block in bytes.
+       \remarks The following parameters are currently supported on biosignalplux devices with firmware v3.7:
+       Port | Index |         System / %Sensor         | # of bytes | Description                                              | Default value
+       ---- | ----- | -------------------------------- | ---------- | -------------------------------------------------------- | ----------------
+         0  |   0   |              System              |     1      | Idle connection timeout in 32-second units               | 28 (~15 minutes)
+         9  |   3   | SpO2/fNIRS sensor on ground port |     2      | LED current setting for red (1st byte) and IR (2nd byte) | Read from \c redDefCurrent and \c irDefCurrent sensor characteristics
+        10  |   2   | Digital output on digital port   |     1      | Byte value 0: output low; value 1: output high; another value: ignored | 0 (output low)
+
 </member>
         <member name="M:Plux.BaseDev.getProperties">
 Returns the device properties.
@@ -636,11 +710,11 @@ Returns the device properties.
        \c hwVersion   | Device hardware version (not present in old devices)
        \c memorySize  | Device internal memory size in kBytes (only on MemoryDev instances) \n (zero if internal memory is not available)
        \c path        | Device path string as passed to constructor
-       \c productID   | Device product identifier
+       \c productID   | Device product identifier (see BaseDev::ProductId)
        \c uid         | Device unique identifier string
        
        The \c fwVersion, \c hwVersion and \c productID properties are composed of two numbers (the major and minor numbers).
-       These properties and are coded as 2-byte integers where the higher byte is the major number
+       These properties and are encoded as 2-byte integers where the higher byte is the major number
        and the lower byte is the minor number.
 
 </member>
@@ -669,6 +743,9 @@ Finds PLUX devices within the given domain.
        If it is not given (or if it is an empty string), a search is attempted in all domains.
 
 </member>
+        <member name="T:Plux.BaseDev.ProductId">
+Product ID enumeration 
+</member>
         <member name="T:Plux.BaseDev">
 \endcond
 Base class for all PLUX devices.
@@ -684,6 +761,15 @@ Base class for all PLUX devices.
 </member>
         <member name="T:Plux.EvtTest">
 \cond
+</member>
+        <member name="T:Plux.EvtDeviceState.State">
+Device state enumeration.
+</member>
+        <member name="T:Plux.EvtDeviceState">
+Device state change event class.
+</member>
+        <member name="T:Plux.EvtSensorTrack">
+Sensor connection/disconnection tracking event class.
 </member>
         <member name="T:Plux.EvtBattery">
 Battery state event class.
@@ -726,10 +812,8 @@ Digital port input change event class.
 %Event base class.
 </member>
         <member name="F:Plux.Clock.source">
-\endcond
-</member>
-        <member name="F:Bluetooth">
 \cond
+\endcond
 </member>
         <member name="T:Plux.Clock.Source">
 %Clock source type enumeration.
@@ -791,7 +875,7 @@ Generic PLUX C++ API exception.
 </member>
         <member name="D:Plux.Properties">
 Map from #String keywords to Variant types.
-\see BaseDev::getProperties(), SourceEx::properties
+\see BaseDev::getProperties(), SessionSource::properties
 </member>
         <member name="M:Plux.Variant.#ctor(Plux.Variant!System.Runtime.CompilerServices.IsConst*!System.Runtime.CompilerServices.IsImplicitlyDereferenced)">
 Constructs a %Variant as a copy of another %Variant.
