@@ -163,7 +163,7 @@ class Program
                int[] LED_param = {80, 40}; // LED values (0-255). Default values:
                                            //  * Head band -> Red = 80, IR = 40;
                                            //  * Arm band -> Red = 4, IR = 2;
-               dev.SetParameter(0x09, 0x03, LED_param, 2); // update oximeter LED values (Red and IR)   
+               dev.SetParameter(0x05, 0x03, LED_param, 2); // update oximeter LED values (Red and IR)   
 
                dev.Start(dev.freq, srcs);  // start acquisition
 
