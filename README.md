@@ -1,11 +1,10 @@
-[winlogo]: http://i.stack.imgur.com/Rfuw7.png
 # Build/Run Instructions
 1. Download and install **Visual Studio** (in the current example the **Visual Studio 2022** version is the one used):
    + https://visualstudio.microsoft.com/downloads/
 
 2. Open a terminal window in the current root folder (`...\c-sharp-sample`):
     <ol type="a">
-    <li>Use the <code><img src="http://i.stack.imgur.com/Rfuw7.png"/> + R</code> shortcut</li>
+    <li>Use the <img src="https://i.postimg.cc/sxyF8VSD/windows-key.png"/> + <code>R</code> shortcut</li>
     <li>Type <code>cmd</code></li>
     <li>Write <code>cd <strong>FOLDER_PATH</strong></code>, being <code><strong>FOLDER_PATH</strong></code> the absolute path to the <code>c-sharp-sample</code> root folder</li>
     </ol>
